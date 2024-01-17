@@ -8,6 +8,9 @@ Adapti_mart_changes.ipynb
 feature_daily_base_price_df.csv
 feature_sku_top1_data.csv
 test.csv
+data.csv
+thresholding.csv
+thresholding2.csv
 
 # C extensions
 *.so
