@@ -4,6 +4,11 @@ __pycache__/
 *$py.class
 
 merged_dynamic_pricing_data.csv
+
+feature_daily_base_price_df.csv
+feature_sku_top1_data.csv
+test.csv
+
 # C extensions
 *.so
 
