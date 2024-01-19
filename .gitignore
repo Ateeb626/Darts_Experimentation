@@ -11,6 +11,8 @@ test.csv
 data.csv
 thresholding.csv
 thresholding2.csv
+thresholding_final.csv
+eda_data.csv
 
 # C extensions
 *.so

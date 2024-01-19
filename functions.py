@@ -1,4 +1,6 @@
 import pandas as pd
+import holidays
+from datetime import datetime, timedelta
 
 
 def data_amputation(df):
@@ -35,7 +37,7 @@ def data_amputation(df):
     return data
 
 
-def preprocessing_data(df):
+def preprocessing_data(df, site_id):
 
     # Lowering Case Column Names
     df.columns = [col.lower() for col in df.columns]
@@ -50,9 +52,12 @@ def preprocessing_data(df):
         'saleprice': 'sale_price',
         'msrp': 'msrp',
         'views': 'views',
-        'cart_quantity': 'cart_quantity'
+        'cart_quantity': 'cart_quantity',
+        'siteid': 'site_id'
     }
     df = df.rename(columns=column_mappings)
+
+    df = df[df['site_id'] == site_id].copy()
 
     # Filtering Useful Columns
     df = df[[
@@ -80,17 +85,257 @@ def preprocessing_data(df):
     return data
 
 
-def threshold_filtering(df):
+def threshold_filtering(df, threshold_base_price_change, threshold_minimum_sales):
 
-    # Identify product_item_sku_ids where the base price remains the same throughout the data
-    sku_ids_to_filter = df.groupby('product_item_sku_id')[
-        'base_price'].transform('nunique') == 3
+    # Identify changes in the base price for each product_item_sku_id
+    df['base_price_change'] = df.groupby('product_item_sku_id')[
+        'base_price'].diff().ne(0)
+
+    # Count how many times the base price changed for each product_item_sku_id
+    change_counts = df.groupby('product_item_sku_id')[
+        'base_price_change'].sum().reset_index(name='no_of_price_changes')
+
+    # Identify product_item_sku_ids where the base price changed at least 3 times
+    sku_ids_to_filter = change_counts[change_counts['no_of_price_changes'] < (
+        threshold_base_price_change + 1)]['product_item_sku_id']
 
     # Filter out rows for the identified product_item_sku_ids
-    filtered_df = df[~sku_ids_to_filter]
+    filtered_df = df[~df['product_item_sku_id'].isin(sku_ids_to_filter)]
 
     # Display the filtered dataframe
-    print(filtered_df)
 
-    filtered_df.to_csv('thresholding2.csv', index=False, mode='w')
+    # total_sales_per_sku = filtered_df[filtered_df['sales'] > 0].groupby(
+    #     'product_item_sku_id').size().reset_index(name='no_of_days_sold')
+    filtered_df['creation_date'] = pd.to_datetime(filtered_df['creation_date'])
+
+    non_zero_sales_df = filtered_df[filtered_df['sales'] > 0]
+    print(non_zero_sales_df.head(50))
+
+    # Sum total sales for each sku considering only non-zero sales
+    # total_sales_per_sku = non_zero_sales_df.groupby('product_item_sku_id').size().reset_index(name='no_of_days_saled')
+    # total_sales_per_sku = non_zero_sales_df.groupby('product_item_sku_id')['sales'].sum().reset_index(name='total_sales')
+
+    total_sales_per_sku = non_zero_sales_df.groupby('product_item_sku_id').agg(
+        no_of_days_sold=('sales', 'size'),  # Count the number of rows
+        total_sales=('sales', 'sum'),          # Sum the 'sales' column
+        # Find the minimum date for each skuid
+        start_date=('creation_date', 'min'),
+        # Find the maximum date for each skuid
+        end_date=('creation_date', 'max'),
+        # Get the corresponding no_of_price_changes value
+        no_of_price_changes=('product_item_sku_id', lambda x: change_counts[change_counts['product_item_sku_id'].isin(
+            x)]['no_of_price_changes'].iloc[0])
+        # # Latest date with non-zero sales
+        # latest_sale_date=('creation_date', lambda x: x.max() if any(
+        #     x > pd.to_datetime('1970-01-01')) else pd.NaT),
+
+
+    ).reset_index()
+    total_sales_per_sku['total_days'] = filtered_df.groupby('product_item_sku_id')[
+        'creation_date'].nunique().reset_index(name='total_days')['total_days']
+
+    total_sales_per_sku['sale_days_to_total_days_percentage'] = (
+        (total_sales_per_sku['no_of_days_sold'] / total_sales_per_sku['total_days']) * 100).round(2)
+
+    # total_sales_per_sku = filtered_df.groupby('product_item_sku_id')['sales'].sum().reset_index()
+    # skus_above_threshold = total_sales_per_sku[total_sales_per_sku['sales'] > threshold_minimum_sales]
+
+    total_sales_per_sku.to_csv('thresholding2.csv', index=False, mode='w')
+    return total_sales_per_sku
+
+
+def eda_function(df):
+    # Identify changes in the base price for each product_item_sku_id
+    df['base_price_change'] = df.groupby('product_item_sku_id')[
+        'base_price'].diff().ne(0)
+
+    # Count how many times the base price changed for each product_item_sku_id
+    change_counts = df.groupby('product_item_sku_id')[
+        'base_price_change'].sum().reset_index(name='no_of_price_changes')
+
+    # Identify product_item_sku_ids where the base price changed at least 3 times
+    sku_ids_to_filter = change_counts[change_counts['no_of_price_changes'] < (
+        0)]['product_item_sku_id']
+
+    # Filter out rows for the identified product_item_sku_ids
+    filtered_df = df[~df['product_item_sku_id'].isin(sku_ids_to_filter)]
+
+    # Display the filtered dataframe
+
+    # total_sales_per_sku = filtered_df[filtered_df['sales'] > 0].groupby(
+    #     'product_item_sku_id').size().reset_index(name='no_of_days_sold')
+    filtered_df['creation_date'] = pd.to_datetime(filtered_df['creation_date'])
+
+    non_zero_sales_df = filtered_df[filtered_df['sales'] > 0]
+
+    # Sum total sales for each sku considering only non-zero sales
+    # total_sales_per_sku = non_zero_sales_df.groupby('product_item_sku_id').size().reset_index(name='no_of_days_saled')
+    # total_sales_per_sku = non_zero_sales_df.groupby('product_item_sku_id')['sales'].sum().reset_index(name='total_sales')
+
+    total_sales_per_sku = non_zero_sales_df.groupby('product_item_sku_id').agg(
+        no_of_days_sold=('sales', 'size'),  # Count the number of rows
+        total_sales=('sales', 'sum'),          # Sum the 'sales' column
+        # Find the minimum date for each skuid
+        start_date=('creation_date', 'min'),
+        # Find the maximum date for each skuid
+        end_date=('creation_date', 'max'),
+        # Get the corresponding no_of_price_changes value
+        no_of_price_changes=('product_item_sku_id', lambda x: change_counts[change_counts['product_item_sku_id'].isin(
+            x)]['no_of_price_changes'].iloc[0])
+        # # Latest date with non-zero sales
+        # latest_sale_date=('creation_date', lambda x: x.max() if any(
+        #     x > pd.to_datetime('1970-01-01')) else pd.NaT),
+
+
+    ).reset_index()
+    total_sales_per_sku['total_days'] = filtered_df.groupby('product_item_sku_id')[
+        'creation_date'].nunique().reset_index(name='total_days')['total_days']
+
+    total_sales_per_sku['sale_days_to_total_days_percentage'] = (
+        (total_sales_per_sku['no_of_days_sold'] / total_sales_per_sku['total_days']) * 100).round(2)
+
+    # total_sales_per_sku = filtered_df.groupby('product_item_sku_id')['sales'].sum().reset_index()
+    # skus_above_threshold = total_sales_per_sku[total_sales_per_sku['sales'] > threshold_minimum_sales]
+
+    print(total_sales_per_sku)
+    total_sales_per_sku.to_csv('eda_data.csv', index=False, mode='w')
+    return total_sales_per_sku
+
+
+def filter_on_base_price_change(df, threshold_base_price_change):
+    # Identify changes in the base price for each product_item_sku_id
+    df['base_price_change'] = df.groupby('product_item_sku_id')[
+        'base_price'].diff().ne(0)
+
+    # Count how many times the base price changed for each product_item_sku_id
+    change_counts = df.groupby('product_item_sku_id')[
+        'base_price_change'].sum().reset_index(name='no_of_price_changes')
+
+    # Identify product_item_sku_ids where the base price changed at least 3 times
+    sku_ids_to_filter = change_counts[change_counts['no_of_price_changes'] < (
+        threshold_base_price_change + 1)]['product_item_sku_id']
+
+    # Filter out rows for the identified product_item_sku_ids
+    filtered_df = df[~df['product_item_sku_id'].isin(sku_ids_to_filter)]
+
     return filtered_df
+
+
+def filter_on_minimum_sales(df, threshold_minimum_sales):
+    total_sales_per_sku = df.groupby('product_item_sku_id')[
+        'sales'].sum().reset_index()
+    skus_above_threshold = total_sales_per_sku[total_sales_per_sku['sales']
+                                               >= threshold_minimum_sales]
+
+    filtered_df_sales = df[df['product_item_sku_id'].isin(
+        skus_above_threshold['product_item_sku_id'])]
+
+    filtered_df_sales.to_csv('thresholding_final.csv', index=False, mode='w')
+
+    return filtered_df_sales
+
+
+def filter_on_recent_months(df, threshold_recent_months):
+    # Convert 'creation_date' to datetime format
+    df['creation_date'] = pd.to_datetime(
+        df['creation_date'], format='%Y-%m-%d')
+
+    # Calculate the threshold date
+    threshold_date = datetime.now() - timedelta(days=threshold_recent_months * 30)
+
+    # Filter out SKUs with the latest sale being more than threshold months from system date
+    filtered_skus = df.groupby('product_item_sku_id')[
+        'creation_date'].max() > threshold_date
+    filtered_skus = filtered_skus[filtered_skus].index.tolist()
+
+    filtered_dataframe = df[df['product_item_sku_id'].isin(filtered_skus)]
+
+    return filtered_dataframe
+
+
+def threshold_filtering_price_optimization(df, threshold_base_price_change, threshold_minimum_sales, threshold_recent_months, threshold_minimum_ratio_of_days_sale_total):
+
+    filtered_df = filter_on_base_price_change(df, threshold_base_price_change)
+
+    filtered_df_sales = filter_on_minimum_sales(
+        filtered_df, threshold_minimum_sales)
+
+    filtered_df_months = filter_on_recent_months(
+        filtered_df_sales, threshold_recent_months)
+
+    filtered_df_months.to_csv('thresholding_final.csv', index=False, mode='w')
+
+    return filtered_df_months
+
+
+def feature_engineering(df):
+
+    df = df.reset_index(drop=True)
+    df.info()
+    # Add a column for holidays
+    us_holidays = holidays.UnitedStates()
+    df['is_holiday'] = [
+        date in us_holidays for date in df['creation_date']]
+
+    """
+    # Implement a rolling window (e.g., window size of 3 days)
+    # rolling_window_size = 3
+    # df['sales_rolling_3'] = df.groupby('product_item_sku_id')['sales'].rolling(
+    #     window=rolling_window_size).mean()
+    # df['base_price_rolling_3'] = df.groupby('product_item_sku_id')['base_price'].rolling(
+    #     window=rolling_window_size).mean()
+
+    # # Implement a rolling window (e.g., window size of 7 days)
+    # rolling_window_size = 7
+    # df['sales_rolling_7'] = df.groupby('product_item_sku_id')['sales'].rolling(
+    #     window=rolling_window_size).mean()
+    # df['base_price_rolling_7'] = df.groupby('product_item_sku_id')['base_price'].rolling(
+    #     window=rolling_window_size).mean()
+
+    # # Implement a rolling window (e.g., window size of 30 days)
+    # rolling_window_size = 30
+    # df['sales_rolling_30'] = df.groupby('product_item_sku_id')['sales'].rolling(
+    #     window=rolling_window_size).mean()
+    # df['base_price_rolling_30'] = df.groupby('product_item_sku_id')['base_price'].rolling(
+    #     window=rolling_window_size).mean()
+    
+
+    Returns:
+        _type_: _description_
+    """
+
+    # Assuming 'df' is your DataFrame
+    df['is_holiday'] = df['is_holiday'].map({False: 0, True: 1})
+
+    df['creation_date'] = pd.to_datetime(df['creation_date'])
+    df['day_of_week'] = df['creation_date'].dt.dayofweek
+    df['week_of_month'] = df['creation_date'].apply(lambda x: (x.day-1)//7 + 1)
+    df['month_of_year'] = df['creation_date'].dt.month
+
+    # Add days till specific events
+
+    def days_till_event(event_date, creation_date):
+        event_month_day = event_date[1:]
+        event_date = pd.to_datetime(f"{creation_date.year}-{event_month_day}")
+        if creation_date > event_date:
+            event_date = pd.to_datetime(
+                f"{creation_date.year + 1}-{event_month_day}")
+        return (event_date - creation_date).days
+
+    df['days_till_black_friday'] = df['creation_date'].apply(
+        lambda x: days_till_event('-11-24', x))
+    df['days_till_christmas'] = df['creation_date'].apply(
+        lambda x: days_till_event('-12-25', x))
+    df['days_till_summer'] = df['creation_date'].apply(
+        lambda x: days_till_event('-06-01', x))
+    df['days_till_winter'] = df['creation_date'].apply(
+        lambda x: days_till_event('-12-01', x))
+    df['is_promotion'] = df['sale_price'].notna().astype(int)
+    # Calculate profit margin assuming 100% when base_price is half of msrp
+    df['margin'] = ((df['msrp'] - df['base_price']) / (df['msrp'] / 2)) * 100
+    # Print the updated DataFrame
+    df['creation_date'] = df['creation_date'].dt.strftime('%Y-%m-%d')
+    # df.to_csv('feature_engineering.csv', index=False, mode='w')
+    
+    df.to_csv('feature_engineering.csv', index=False, mode='w')
+    return df
