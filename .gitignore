@@ -13,6 +13,7 @@ thresholding.csv
 thresholding2.csv
 thresholding_final.csv
 eda_data.csv
+feature_engineering.csv
 
 # C extensions
 *.so
