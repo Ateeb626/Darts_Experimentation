@@ -3,7 +3,7 @@ import numpy as np
 import holidays as holidays
 
 #https://storage.cloud.google.com/dynamic_pricing-data/merged_dynamic_pricing_data.csv
-df = pd.read_csv("merged_dynamic_pricing_data.csv")
+# df = pd.read_csv("merged_dynamic_pricing_data.csv")
 
 # checking for price volatility
 def get_top_volatile_skus_mattress(price_changes):
@@ -131,6 +131,7 @@ def get_top_selling_skus_furniture(threshold):
 def feature_engineering(sku_id):
     # FEATURE ENGINEERING CELL
     # print(df)
+    df = pd.read_csv("merged_dynamic_pricing_data.csv")
     feature_sku_data = df
     # test = df
     # test = test[[
@@ -227,14 +228,6 @@ def feature_engineering(sku_id):
     print(feature_sku_top1_data)
 
 
-    
-
-
-
-
-
-  
-
     # # Add a column for holidays
     # us_holidays = holidays.UnitedStates()
     # feature_sku_top1_data['is_holiday'] = [
@@ -299,7 +292,7 @@ def feature_engineering(sku_id):
     # return feature_daily_base_price_df
     # feature_daily_quantity_df.to_csv('feature_daily_base_price_df.csv', index=False, mode='w')
     # return feature_daily_base_price_df
-    feature_sku_top1_data.to_csv('feature_sku_top1_data.csv', index=False, mode='w')
+    #feature_sku_top1_data.to_csv('feature_sku_top1_data.csv', index=False, mode='w')
     return feature_sku_top1_data
     
     
