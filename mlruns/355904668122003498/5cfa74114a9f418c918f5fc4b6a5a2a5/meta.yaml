@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/355904668122003498/5cfa74114a9f418c918f5fc4b6a5a2a5/artifacts
+end_time: 1707000689961
+entry_point_name: ''
+experiment_id: '355904668122003498'
+lifecycle_stage: active
+run_id: 5cfa74114a9f418c918f5fc4b6a5a2a5
+run_name: LightGBM on three days
+run_uuid: 5cfa74114a9f418c918f5fc4b6a5a2a5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1707000689857
+status: 3
+tags: []
+user_id: HP

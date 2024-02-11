@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/497156172791036355/5e30cb25aed8448d97f2f16b1ce3d2f8/artifacts
+end_time: 1706999072713
+entry_point_name: ''
+experiment_id: '497156172791036355'
+lifecycle_stage: active
+run_id: 5e30cb25aed8448d97f2f16b1ce3d2f8
+run_name: Block Rnn on three days
+run_uuid: 5e30cb25aed8448d97f2f16b1ce3d2f8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1706999072504
+status: 3
+tags: []
+user_id: HP

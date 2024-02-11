@@ -1,0 +1,16 @@
+artifact_uri: mlflow-artifacts:/497156172791036355/c934d3020458455287829b04cbe733c2/artifacts
+end_time: 1706990257921
+entry_point_name: ''
+experiment_id: '497156172791036355'
+lifecycle_stage: active
+run_id: c934d3020458455287829b04cbe733c2
+run_name: RNN LSTM Run on three days data after changing input size length, way worse
+  results in the charts
+run_uuid: c934d3020458455287829b04cbe733c2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1706990257777
+status: 3
+tags: []
+user_id: HP

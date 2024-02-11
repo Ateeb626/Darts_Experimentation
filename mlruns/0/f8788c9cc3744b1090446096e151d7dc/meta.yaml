@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Users/HP/Documents/Fyp_experimentation/Darts_Experimentation/mlruns/0/f8788c9cc3744b1090446096e151d7dc/artifacts
+end_time: 1706908837751
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f8788c9cc3744b1090446096e151d7dc
+run_name: XGBModel Run on three days data
+run_uuid: f8788c9cc3744b1090446096e151d7dc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1706908837591
+status: 3
+tags: []
+user_id: HP

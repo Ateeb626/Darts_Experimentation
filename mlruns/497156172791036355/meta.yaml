@@ -1,0 +1,7 @@
+artifact_location: mlflow-artifacts:/497156172791036355
+creation_time: 1706989408268
+experiment_id: '497156172791036355'
+last_update_time: 1706997222976
+lifecycle_stage: active
+name: rnn experimentation
+tags: {}

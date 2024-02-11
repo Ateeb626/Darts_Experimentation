@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Users/HP/Documents/Fyp_experimentation/Darts_Experimentation/mlruns/0/a2e8433fe66b40efba1f5aa36b61053a/artifacts
+end_time: 1706905404719
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a2e8433fe66b40efba1f5aa36b61053a
+run_name: amusing-cod-659
+run_uuid: a2e8433fe66b40efba1f5aa36b61053a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1706905404645
+status: 4
+tags: []
+user_id: HP

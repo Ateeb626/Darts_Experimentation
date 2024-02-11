@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Users/HP/Documents/Fyp_experimentation/Darts_Experimentation/mlruns/0/fce8316c38d54b87be2a489978f515ee/artifacts
+end_time: 1706905310952
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: fce8316c38d54b87be2a489978f515ee
+run_name: omniscient-koi-841
+run_uuid: fce8316c38d54b87be2a489978f515ee
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1706905310871
+status: 4
+tags: []
+user_id: HP

@@ -1,0 +1,15 @@
+artifact_uri: file:///c:/Users/HP/Documents/Fyp_experimentation/Darts_Experimentation/mlruns/0/651c1f8371204e5195018bcb78ebc9f0/artifacts
+end_time: 1706905102882
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 651c1f8371204e5195018bcb78ebc9f0
+run_name: thoughtful-mole-148
+run_uuid: 651c1f8371204e5195018bcb78ebc9f0
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1706905102758
+status: 3
+tags: []
+user_id: HP

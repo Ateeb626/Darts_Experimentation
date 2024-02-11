@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/497156172791036355/26190d6f0d9d438aa58270793b3b2ee5/artifacts
+end_time: 1706989434240
+entry_point_name: ''
+experiment_id: '497156172791036355'
+lifecycle_stage: active
+run_id: 26190d6f0d9d438aa58270793b3b2ee5
+run_name: RNN LSTM Run on three days data
+run_uuid: 26190d6f0d9d438aa58270793b3b2ee5
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1706989434085
+status: 3
+tags: []
+user_id: HP

@@ -1,0 +1,16 @@
+artifact_uri: file:///c:/Users/HP/Documents/Fyp_experimentation/Darts_Experimentation/mlruns/481981291394741616/add2c6c1fcb14f8b80d9c78672bcaf55/artifacts
+deleted_time: 1706989416286
+end_time: 1706989198867
+entry_point_name: ''
+experiment_id: '481981291394741616'
+lifecycle_stage: deleted
+run_id: add2c6c1fcb14f8b80d9c78672bcaf55
+run_name: RNN LSTM Run on three days data
+run_uuid: add2c6c1fcb14f8b80d9c78672bcaf55
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1706989198770
+status: 3
+tags: []
+user_id: HP
